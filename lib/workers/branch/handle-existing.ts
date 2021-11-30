@@ -1,4 +1,5 @@
 import { GlobalConfig } from '../../config/global';
+import { PROJECT } from '../../constants';
 import { logger } from '../../logger';
 import { Pr, platform } from '../../platform';
 import { PrState } from '../../types';
@@ -9,16 +10,16 @@ export async function handlepr(config: BranchConfig, pr: Pr): Promise<void> {
   if (pr.state === PrState.Closed) {
     let content;
     if (config.updateType === 'major') {
-      content = `As this PR has been closed unmerged, Renovate will ignore this upgrade and you will not receive PRs for *any* future ${config.newMajor}.x releases. However, if you upgrade to ${config.newMajor}.x manually then Renovate will then reenable updates for minor and patch updates automatically.`;
+      content = `As this PR has been closed unmerged, ${PROJECT} will ignore this upgrade and you will not receive PRs for *any* future ${config.newMajor}.x releases. However, if you upgrade to ${config.newMajor}.x manually then ${PROJECT} will then reenable updates for minor and patch updates automatically.`;
     } else if (config.updateType === 'digest') {
-      content = `As this PR has been closed unmerged, Renovate will ignore this upgrade updateType and you will not receive PRs for *any* future ${config.depName}:${config.currentValue} digest updates. Digest updates will resume if you update the specified tag at any time.`;
+      content = `As this PR has been closed unmerged, ${PROJECT} will ignore this upgrade updateType and you will not receive PRs for *any* future ${config.depName}:${config.currentValue} digest updates. Digest updates will resume if you update the specified tag at any time.`;
     } else {
-      content = `As this PR has been closed unmerged, Renovate will now ignore this update (${config.newValue}). You will still receive a PR once a newer version is released, so if you wish to permanently ignore this dependency, please add it to the \`ignoreDeps\` array of your renovate config.`;
+      content = `As this PR has been closed unmerged, ${PROJECT} will now ignore this update (${config.newValue}). You will still receive a PR once a newer version is released, so if you wish to permanently ignore this dependency, please add it to the \`ignoreDeps\` array of your ${PROJECT} config.`;
     }
     content +=
       '\n\nIf this PR was closed by mistake or you changed your mind, you can simply rename this PR and you will soon get a fresh replacement PR opened.';
     if (!config.suppressNotifications.includes('prIgnoreNotification')) {
-      const ignoreTopic = `Renovate Ignore Notification`;
+      const ignoreTopic = `${PROJECT} Ignore Notification`;
       if (GlobalConfig.get('dryRun')) {
         logger.info(
           `DRY-RUN: Would ensure closed PR comment in PR #${pr.number}`
